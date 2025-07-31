@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} un ticket - LITReview{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-2xl">
+    <!-- Header -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">LITReview</h1>
+            <div class="flex space-x-4">
+                <a href="{% url 'reviews:home' %}" class="text-gray-500 hover:text-gray-700 transition-colors">Flux</a>
+                <span class="text-gray-900 font-medium">Posts</span>
+                <span class="text-gray-500">Abonnements</span>
+                <a href="{% url 'authentication:logout' %}" class="text-gray-500 hover:text-gray-700 transition-colors">Se déconnecter</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-lg border border-gray-200 p-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ action }} un ticket</h2>
+        
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Title Field -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Titre
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.title.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Description Field -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                </label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.description.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Image Field -->
+            <div>
+                <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Image
+                </label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {% for error in form.image.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if ticket and ticket.image %}
+                    <div class="mt-3">
+                        <p class="text-sm text-gray-600 mb-2">Image actuelle:</p>
+                        <img src="{{ ticket.image.url }}" alt="{{ ticket.title }}" 
+                             class="max-w-xs h-auto rounded-lg border border-gray-200">
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'reviews:home' %}" 
+                   class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    Annuler
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    {{ action }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

@@ -7,14 +7,14 @@ from .forms import LoginForm, SignUpForm
 
 @login_required
 def home(request):
-    """Home page - requires authentication"""
-    return render(request, 'dashboard.html')
+    """Redirect to reviews home page"""
+    return redirect('reviews:home')
 
 
 def register(request):
     """Registration page"""
     if request.user.is_authenticated:
-        return redirect('authentication:home')
+        return redirect('reviews:home')
     
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -23,7 +23,7 @@ def register(request):
             username = form.cleaned_data.get('username')
             messages.success(request, f'Compte créé avec succès pour {username}!')
             login(request, user)
-            return redirect('authentication:home')
+            return redirect('reviews:home')
     else:
         form = SignUpForm()
     
@@ -33,7 +33,7 @@ def register(request):
 def login_view(request):
     """Login page"""
     if request.user.is_authenticated:
-        return redirect('authentication:home')
+        return redirect('reviews:home')
     
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -44,7 +44,7 @@ def login_view(request):
             if user:
                 login(request, user)
                 messages.success(request, f'Bienvenue {user.username}!')
-                return redirect('authentication:home')
+                return redirect('reviews:home')
     else:
         form = LoginForm()
     
