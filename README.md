@@ -224,7 +224,6 @@ The application uses Django templates with a clean, responsive design:
 - `/auth/login/` - User login
 - `/auth/register/` - User registration
 - `/auth/logout/` - User logout
-- `/auth/dashboard/` - User dashboard
 - `/auth/subscriptions/` - Manage user follows
 
 ### Reviews
