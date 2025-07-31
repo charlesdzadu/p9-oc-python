@@ -65,4 +65,36 @@ class SignUpForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         # Remove help text
         for field_name in self.fields:
-            self.fields[field_name].help_text = None 
+            self.fields[field_name].help_text = None
+
+
+class FollowUserForm(forms.Form):
+    """Form to follow a user by username"""
+    username = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nom d\'utilisateur',
+            'required': True
+        })
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.current_user = kwargs.pop('current_user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        
+        if not username:
+            return username
+            
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise forms.ValidationError('Cet utilisateur n\'existe pas.')
+        
+        if user == self.current_user:
+            raise forms.ValidationError('Vous ne pouvez pas vous suivre vous-même.')
+            
+        return username 

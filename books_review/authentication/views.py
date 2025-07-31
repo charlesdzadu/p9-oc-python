@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import LoginForm, SignUpForm
-from reviews.models import Ticket, Review
+from django.http import JsonResponse
+from .forms import LoginForm, SignUpForm, FollowUserForm
+from .models import User
+from reviews.models import Ticket, Review, UserFollows
 
 
 @login_required
@@ -88,3 +90,64 @@ def dashboard(request):
     user_posts.sort(key=lambda x: x['time_created'], reverse=True)
     
     return render(request, 'dashboard.html', {'user_posts': user_posts})
+
+
+@login_required
+def subscriptions(request):
+    """Subscriptions page - following and followers management"""
+    follow_form = FollowUserForm(current_user=request.user)
+    
+    if request.method == 'POST':
+        follow_form = FollowUserForm(request.POST, current_user=request.user)
+        if follow_form.is_valid():
+            username = follow_form.cleaned_data['username']
+            try:
+                user_to_follow = User.objects.get(username=username)
+                following, created = UserFollows.objects.get_or_create(
+                    user=request.user,
+                    followed_user=user_to_follow
+                )
+                if created:
+                    messages.success(request, f'Vous suivez maintenant {user_to_follow.username}!')
+                else:
+                    messages.info(request, f'Vous suivez déjà {user_to_follow.username}.')
+            except User.DoesNotExist:
+                messages.error(request, 'Utilisateur introuvable.')
+            
+            return redirect('authentication:subscriptions')
+    
+    # Get users the current user is following
+    following_users = User.objects.filter(
+        followed_by__user=request.user
+    ).order_by('username')
+    
+    # Get users who follow the current user
+    followers = User.objects.filter(
+        following__followed_user=request.user
+    ).order_by('username')
+    
+    context = {
+        'follow_form': follow_form,
+        'following_users': following_users,
+        'followers': followers,
+    }
+    
+    return render(request, 'subscriptions.html', context)
+
+
+@login_required
+def unfollow_user(request, username):
+    """Unfollow a user"""
+    if request.method == 'POST':
+        user_to_unfollow = get_object_or_404(User, username=username)
+        try:
+            following = UserFollows.objects.get(
+                user=request.user,
+                followed_user=user_to_unfollow
+            )
+            following.delete()
+            messages.success(request, f'Vous ne suivez plus {user_to_unfollow.username}.')
+        except UserFollows.DoesNotExist:
+            messages.error(request, 'Vous ne suivez pas cet utilisateur.')
+    
+    return redirect('authentication:subscriptions')
