@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord - LITReview{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-4xl space-y-8">
+    <!-- Welcome Card -->
+    <div class="bg-white rounded-lg border border-gray-200 p-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-blue-600">
+                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <h1 class="mt-6 text-4xl font-bold text-gray-900">Tableau de bord</h1>
+            <p class="mt-2 text-lg text-gray-600">
+                Bienvenue, <span class="font-semibold text-primary-600">{{ user.username }}</span>!
+            </p>
+        </div>
+
+        <!-- Welcome Message -->
+        <div class="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-medium text-gray-900">Félicitations!</h3>
+                    <p class="text-gray-700">
+                        Vous êtes maintenant connecté à LITReview. Votre plateforme de critiques littéraires vous attend.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Placeholder for future features -->
+            <div class="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors duration-200">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-medium text-gray-900">Écrire une critique</h4>
+                        <p class="text-sm text-gray-600">Partagez votre avis sur vos lectures</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors duration-200">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-medium text-gray-900">Découvrir des livres</h4>
+                        <p class="text-sm text-gray-600">Explorez notre bibliothèque</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="mt-8 flex justify-center space-x-4">
+            <a href="{% url 'authentication:logout' %}" 
+               class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Se déconnecter
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
