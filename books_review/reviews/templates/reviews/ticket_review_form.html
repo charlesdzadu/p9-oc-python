@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} une critique - LITReview{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-4xl space-y-6">
+    {% include 'header.html' %}
+    
+    <!-- Page Title -->
+    <div class="mb-6 text-center">
+        <h2 class="text-lg font-medium text-gray-900">{{ action }} une critique (pas en réponse à un ticket)</h2>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-lg border border-gray-200 p-8">
+        <form method="post" enctype="multipart/form-data" class="space-y-8">
+            {% csrf_token %}
+            
+            <!-- Book/Article Section -->
+            <div class="border border-gray-300 rounded-lg p-6">
+                <h3 class="text-base font-medium text-gray-900 mb-6">Livre / Article</h3>
+                
+                <!-- Title Field -->
+                <div class="mb-4">
+                    <label for="{{ form.ticket_title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Titre
+                    </label>
+                    {{ form.ticket_title }}
+                    {% if form.ticket_title.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.ticket_title.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Description Field -->
+                <div class="mb-4">
+                    <label for="{{ form.ticket_description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Description
+                    </label>
+                    {{ form.ticket_description }}
+                    {% if form.ticket_description.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.ticket_description.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Image Field -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Image
+                    </label>
+                    <div class="flex items-center space-x-4">
+                        <label for="{{ form.ticket_image.id_for_label }}" 
+                               class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors cursor-pointer">
+                            Télécharger fichier
+                        </label>
+                        <span id="file-name" class="text-sm text-gray-500">Aucun fichier sélectionné</span>
+                    </div>
+                    {{ form.ticket_image }}
+                    {% if form.ticket_image.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.ticket_image.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Review Section -->
+            <div class="border border-gray-300 rounded-lg p-6">
+                <h3 class="text-base font-medium text-gray-900 mb-6">Critique</h3>
+                
+                <!-- Review Title Field -->
+                <div class="mb-4">
+                    <label for="{{ form.review_headline.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Titre
+                    </label>
+                    {{ form.review_headline }}
+                    {% if form.review_headline.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.review_headline.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Rating Field -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Note
+                    </label>
+                    <div class="flex items-center space-x-6">
+                        {% for choice in form.review_rating %}
+                            <div class="flex items-center">
+                                {{ choice.tag }}
+                                <label for="{{ choice.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                    - {{ choice.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if form.review_rating.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.review_rating.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Comment Field -->
+                <div>
+                    <label for="{{ form.review_body.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Commentaire
+                    </label>
+                    {{ form.review_body }}
+                    {% if form.review_body.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.review_body.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <button type="submit" 
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                    Envoyer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('{{ form.ticket_image.id_for_label }}');
+    const fileName = document.getElementById('file-name');
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                fileName.textContent = e.target.files[0].name;
+            } else {
+                fileName.textContent = 'Aucun fichier sélectionné';
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

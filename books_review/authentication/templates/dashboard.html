@@ -3,7 +3,9 @@
 {% block title %}Tableau de bord - LITReview{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-4xl space-y-8">
+<div class="w-full max-w-4xl space-y-6">
+    {% include 'header.html' %}
+    
     <!-- Welcome Card -->
     <div class="bg-white rounded-lg border border-gray-200 p-8">
         <!-- Header -->
@@ -68,16 +70,6 @@
             </div>
         </div>
 
-        <!-- User Actions -->
-        <div class="mt-8 flex justify-center space-x-4">
-            <a href="{% url 'authentication:logout' %}" 
-               class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
-                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Se déconnecter
-            </a>
-        </div>
     </div>
 </div>
 {% endblock %} 

@@ -3,8 +3,10 @@
 {% block title %}Supprimer {{ object_type }} - LITReview{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-md">
-    <div class="bg-white rounded-lg border border-gray-200 p-8">
+<div class="w-full max-w-4xl space-y-6">
+    {% include 'header.html' %}
+    
+    <div class="bg-white rounded-lg border border-gray-200 p-8 max-w-md mx-auto">
         <div class="text-center">
             <!-- Warning Icon -->
             <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-100 mb-6">

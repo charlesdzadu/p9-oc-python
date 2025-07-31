@@ -12,6 +12,7 @@ urlpatterns = [
     path('tickets/<int:ticket_id>/delete/', views.delete_ticket, name='delete_ticket'),
     
     # Review URLs
+    path('reviews/create/', views.create_standalone_review, name='create_standalone_review'),
     path('tickets/<int:ticket_id>/review/', views.create_review, name='create_review'),
     path('reviews/<int:review_id>/edit/', views.edit_review, name='edit_review'),
     path('reviews/<int:review_id>/delete/', views.delete_review, name='delete_review'),

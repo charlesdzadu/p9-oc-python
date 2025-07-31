@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import TicketForm, ReviewForm
+from .forms import TicketForm, ReviewForm, TicketReviewForm
 from .models import Ticket, Review
 
 
@@ -132,6 +132,40 @@ def create_review(request, ticket_id):
 
 
 @login_required
+def create_standalone_review(request):
+    """Create a review with its own ticket (standalone review)"""
+    if request.method == 'POST':
+        form = TicketReviewForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Create the ticket first
+            ticket = Ticket.objects.create(
+                title=form.cleaned_data['ticket_title'],
+                description=form.cleaned_data['ticket_description'],
+                image=form.cleaned_data['ticket_image'],
+                user=request.user
+            )
+            
+            # Create the review
+            review = Review.objects.create(
+                ticket=ticket,
+                headline=form.cleaned_data['review_headline'],
+                rating=form.cleaned_data['review_rating'],
+                body=form.cleaned_data['review_body'],
+                user=request.user
+            )
+            
+            messages.success(request, 'Critique créée avec succès!')
+            return redirect('reviews:home')
+    else:
+        form = TicketReviewForm()
+    
+    return render(request, 'reviews/ticket_review_form.html', {
+        'form': form,
+        'action': 'Créer'
+    })
+
+
+@login_required
 def edit_review(request, review_id):
     """Edit an existing review"""
     review = get_object_or_404(Review, id=review_id)
@@ -141,21 +175,56 @@ def edit_review(request, review_id):
         messages.error(request, 'Vous ne pouvez modifier que vos propres critiques.')
         return redirect('reviews:home')
     
-    if request.method == 'POST':
-        form = ReviewForm(request.POST, instance=review)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Critique modifiée avec succès!')
-            return redirect('reviews:home')
-    else:
-        form = ReviewForm(instance=review)
+    # Check if user also owns the ticket to allow editing both
+    can_edit_ticket = review.ticket.user == request.user
     
-    return render(request, 'reviews/review_form.html', {
-        'form': form, 
-        'action': 'Modifier', 
-        'review': review,
-        'ticket': review.ticket
-    })
+    if can_edit_ticket:
+        # Use combined form if user owns both ticket and review
+        if request.method == 'POST':
+            form = TicketReviewForm(request.POST, request.FILES, review_instance=review)
+            if form.is_valid():
+                # Update the ticket
+                ticket = review.ticket
+                ticket.title = form.cleaned_data['ticket_title']
+                ticket.description = form.cleaned_data['ticket_description']
+                if form.cleaned_data['ticket_image']:
+                    ticket.image = form.cleaned_data['ticket_image']
+                ticket.save()
+                
+                # Update the review
+                review.headline = form.cleaned_data['review_headline']
+                review.rating = form.cleaned_data['review_rating']
+                review.body = form.cleaned_data['review_body']
+                review.save()
+                
+                messages.success(request, 'Critique modifiée avec succès!')
+                return redirect('reviews:home')
+        else:
+            form = TicketReviewForm(review_instance=review)
+        
+        return render(request, 'reviews/ticket_review_form.html', {
+            'form': form,
+            'action': 'Modifier',
+            'review': review,
+            'ticket': review.ticket
+        })
+    else:
+        # Use regular review form if user doesn't own the ticket
+        if request.method == 'POST':
+            form = ReviewForm(request.POST, instance=review)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Critique modifiée avec succès!')
+                return redirect('reviews:home')
+        else:
+            form = ReviewForm(instance=review)
+        
+        return render(request, 'reviews/review_form.html', {
+            'form': form, 
+            'action': 'Modifier', 
+            'review': review,
+            'ticket': review.ticket
+        })
 
 
 @login_required
