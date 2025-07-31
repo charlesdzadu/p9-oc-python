@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import LoginForm, SignUpForm
+from reviews.models import Ticket, Review
 
 
 @login_required
@@ -61,5 +62,29 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    """Dashboard view for authenticated users"""
-    return render(request, 'dashboard.html')
+    """Dashboard view showing user's own tickets and reviews"""
+    # Get user's tickets and reviews
+    user_tickets = Ticket.objects.filter(user=request.user)
+    user_reviews = Review.objects.filter(user=request.user)
+    
+    # Create a combined list of user's posts
+    user_posts = []
+    
+    for ticket in user_tickets:
+        user_posts.append({
+            'type': 'ticket',
+            'object': ticket,
+            'time_created': ticket.time_created
+        })
+    
+    for review in user_reviews:
+        user_posts.append({
+            'type': 'review',
+            'object': review,
+            'time_created': review.time_created
+        })
+    
+    # Sort by creation time (newest first)
+    user_posts.sort(key=lambda x: x['time_created'], reverse=True)
+    
+    return render(request, 'dashboard.html', {'user_posts': user_posts})
